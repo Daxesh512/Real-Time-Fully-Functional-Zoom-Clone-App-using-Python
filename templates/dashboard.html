@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - ZoomClone{% endblock %}
+
+{% block content %}
+<div class="dashboard-section">
+    <div class="container py-5">
+        <!-- Welcome Header -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="welcome-card">
+                    <h1 class="display-6 fw-bold mb-2">
+                        Welcome back, {{ user.name }}! 👋
+                    </h1>
+                    <p class="lead text-muted mb-0">
+                        Ready to connect with your team?
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-5">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">{{ stats.created }}</h3>
+                        <p class="stat-label">Meetings Created</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon bg-success">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">{{ stats.joined }}</h3>
+                        <p class="stat-label">Meetings Joined</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">{{ stats.scheduled }}</h3>
+                        <p class="stat-label">Scheduled Meetings</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Cards -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="row g-4">
+                    <!-- Start Meeting -->
+                    <div class="col-md-6">
+                        <div class="action-card">
+                            <div class="action-icon bg-primary">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <h5 class="action-title">Start Meeting</h5>
+                            <p class="action-description">
+                                Start an instant meeting and invite others to join
+                            </p>
+                            <a href="{{ url_for('start_meeting') }}" class="btn btn-primary">
+                                <i class="fas fa-play me-2"></i>Start Now
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Join Meeting -->
+                    <div class="col-md-6">
+                        <div class="action-card">
+                            <div class="action-icon bg-success">
+                                <i class="fas fa-sign-in-alt"></i>
+                            </div>
+                            <h5 class="action-title">Join Meeting</h5>
+                            <p class="action-description">
+                                Join a meeting using the meeting ID
+                            </p>
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#joinMeetingModal">
+                                <i class="fas fa-plus me-2"></i>Join Meeting
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Schedule Meeting -->
+                    <div class="col-md-6">
+                        <div class="action-card">
+                            <div class="action-icon bg-warning">
+                                <i class="fas fa-calendar-plus"></i>
+                            </div>
+                            <h5 class="action-title">Schedule Meeting</h5>
+                            <p class="action-description">
+                                Schedule a meeting for later
+                            </p>
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#scheduleMeetingModal">
+                                <i class="fas fa-calendar me-2"></i>Schedule
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Meeting History -->
+                    <div class="col-md-6">
+                        <div class="action-card">
+                            <div class="action-icon bg-info">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h5 class="action-title">Meeting History</h5>
+                            <p class="action-description">
+                                View your past meeting records
+                            </p>
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#meetingHistoryModal">
+                                <i class="fas fa-list me-2"></i>View History
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Tips -->
+            <div class="col-lg-4">
+                <div class="tips-card">
+                    <h5 class="tips-title">
+                        <i class="fas fa-lightbulb me-2"></i>Quick Tips
+                    </h5>
+                    <ul class="tips-list">
+                        <li>
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Test your camera and microphone before important meetings
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Use screen sharing to present documents effectively
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Enable chat for better communication during meetings
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Schedule meetings in advance for better planning
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Join Meeting Modal -->
+<div class="modal fade" id="joinMeetingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-sign-in-alt me-2"></i>Join Meeting
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('join_meeting') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="meeting_id" class="form-label">Meeting ID</label>
+                        <input type="text" class="form-control" id="meeting_id" name="meeting_id" 
+                               placeholder="Enter 10-digit meeting ID" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-sign-in-alt me-2"></i>Join Meeting
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Schedule Meeting Modal -->
+<div class="modal fade" id="scheduleMeetingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-calendar-plus me-2"></i>Schedule Meeting
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('schedule_meeting') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Meeting Title</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               placeholder="Enter meeting title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="datetime" class="form-label">Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="datetime" name="datetime">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-calendar me-2"></i>Schedule Meeting
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Meeting History Modal -->
+<div class="modal fade" id="meetingHistoryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-history me-2"></i>Meeting History
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="historyContent">
+                    <div class="text-center">
+                        <i class="fas fa-spinner fa-spin fa-2x text-primary mb-3"></i>
+                        <p>Loading meeting history...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load meeting history when modal is shown
+document.getElementById('meetingHistoryModal').addEventListener('show.bs.modal', function() {
+    loadMeetingHistory();
+});
+
+function loadMeetingHistory() {
+    fetch('/meeting-history')
+        .then(response => response.json())
+        .then(data => {
+            const historyContent = document.getElementById('historyContent');
+            
+            if (data.history && data.history.length > 0) {
+                let historyHtml = '<div class="list-group">';
+                
+                data.history.forEach(meeting => {
+                    const date = new Date(meeting.joined_at).toLocaleDateString();
+                    const time = new Date(meeting.joined_at).toLocaleTimeString();
+                    const roleClass = meeting.role === 'host' ? 'text-primary' : 'text-success';
+                    const roleIcon = meeting.role === 'host' ? 'fa-crown' : 'fa-user';
+                    
+                    historyHtml += `
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">${meeting.meeting_title}</h6>
+                                <small>${date} ${time}</small>
+                            </div>
+                            <p class="mb-1">
+                                <i class="fas ${roleIcon} ${roleClass} me-2"></i>
+                                ${meeting.role === 'host' ? 'Hosted by you' : 'Hosted by ' + meeting.host_name}
+                            </p>
+                            <small class="text-muted">Meeting ID: ${meeting.meeting_id}</small>
+                        </div>
+                    `;
+                });
+                
+                historyHtml += '</div>';
+                historyContent.innerHTML = historyHtml;
+            } else {
+                historyContent.innerHTML = `
+                    <div class="text-center text-muted">
+                        <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                        <p>No meeting history found.</p>
+                        <p>Start or join a meeting to see your history here.</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading meeting history:', error);
+            document.getElementById('historyContent').innerHTML = `
+                <div class="text-center text-danger">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                    <p>Error loading meeting history.</p>
+                </div>
+            `;
+        });
+}
+</script>
+{% endblock %}
